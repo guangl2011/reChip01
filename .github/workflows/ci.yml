@@ -47,3 +47,21 @@ jobs:
         run: python -m pip install -e ".[dev]"
       - name: Pytest
         run: pytest
+
+  evaluation-report:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install package with dev tooling
+        run: python -m pip install -e ".[dev]"
+      - name: Run evaluation harness (simulation-based pipeline check)
+        run: python -m rechip01.engine --out calibration-report
+      - name: Upload calibration report artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: calibration-report
+          path: calibration-report/
+          if-no-files-found: error

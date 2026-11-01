@@ -15,7 +15,7 @@ reliability results and not H1/H2/H3 outcomes.
 | `rechip01.repository` | `tests/test_repository.py` | Passport and scan-record save/load parity; duplicate issuance rejected; latest-run lookup; path-safe record keys |
 | `rechip01.simulator` | `tests/test_simulator/` | Schema validation on sampled outputs; seed reproducibility; ground-truth label integrity; knob monotonicity (see `tests/test_simulator/README.md` for the go/no-go commands) |
 | `rechip01.scanner` | `tests/test_scanner/` | `pytest` + `hypothesis`: valid/invalid/partial fixtures; header normalization and string coercion; provenance stamping and conflict quarantine; machine-readable rejection reasons; feed-vs-export parity; repository round-trips; CLI end-to-end |
-| `rechip01.engine` | `tests/test_engine/` (planned) | Calibration report; AUROC vs simulator ground truth; OOD flagging |
+| `rechip01.engine` | `tests/test_engine/` | `pytest` + `hypothesis`: MLE risk ordering vs generator truth; interval bracketing/ordering/widening; OOD flag never scores silently (valid intervals, widening supersets); missing-input flagging; provenance propagation; seed determinism; harness rails — AUROC CI excludes 0.5 with a wide-margin point floor, ECE, coverage, in-distribution OOD rate (see `tests/test_engine/test_evaluation.py`) |
 | `rechip01.disposition` | `tests/test_disposition/` (planned) | Property tests on synthetic economies; hand-computed fixtures; regret-bound sanity |
 | `rechip01.passport` (+ API) | `tests/test_api/` (planned) | `httpx`/`TestClient` integration; provenance immutability; OpenAPI schema check |
 | Dashboard | UI smoke test (planned) | Batch overview + passport view render; simulated/measured badges visible |
@@ -27,6 +27,11 @@ ruff check .            # lint (CI: lint job)
 ruff format --check .   # formatting (CI: lint job)
 mypy                    # strict typecheck (CI: typecheck job)
 pytest                  # unit + property tests (CI: test job, py3.11 + py3.13)
+
+# Engine go/no-go evaluation — trains on a simulated fleet, scores a held-out
+# batch with injected latent defects, and writes calibration-report.md,
+# estimates.jsonl, and config.json (CI: evaluation-report job, artifact).
+python -m rechip01.engine --out=calibration-report
 ```
 
 ## H1/H2/H3 comparison plan
