@@ -16,6 +16,7 @@ reliability results and not H1/H2/H3 outcomes.
 | `rechip01.simulator` | `tests/test_simulator/` | Schema validation on sampled outputs; seed reproducibility; ground-truth label integrity; knob monotonicity (see `tests/test_simulator/README.md` for the go/no-go commands) |
 | `rechip01.scanner` | `tests/test_scanner/` | `pytest` + `hypothesis`: valid/invalid/partial fixtures; header normalization and string coercion; provenance stamping and conflict quarantine; machine-readable rejection reasons; feed-vs-export parity; repository round-trips; CLI end-to-end |
 | `rechip01.engine` | `tests/test_engine/` | `pytest` + `hypothesis`: MLE risk ordering vs generator truth; interval bracketing/ordering/widening; OOD flag never scores silently (valid intervals, widening supersets); missing-input flagging; provenance propagation; seed determinism; harness rails — AUROC CI excludes 0.5 with a wide-margin point floor, ECE, coverage, in-distribution OOD rate (see `tests/test_engine/test_evaluation.py`) |
+| `rechip01.evaluation` | `tests/test_baseline_comparison.py`, `tests/test_baseline_properties.py` | `pytest` + `hypothesis`: end-to-end engine vs DCGM-threshold-grading vs error-count heuristic on the identical held-out batch; metric invariants (AUROC bounds/reversal symmetry/monotone invariance, ECE bounds); holdout isolation — baseline scores depend only on held-out scans and never shift with the training fleet; CLI report + JSON generation (see below) |
 | `rechip01.disposition` | `tests/test_disposition/` (planned) | Property tests on synthetic economies; hand-computed fixtures; regret-bound sanity |
 | `rechip01.passport` (+ API) | `tests/test_api/` (planned) | `httpx`/`TestClient` integration; provenance immutability; OpenAPI schema check |
 | Dashboard | UI smoke test (planned) | Batch overview + passport view render; simulated/measured badges visible |
@@ -32,6 +33,13 @@ pytest                  # unit + property tests (CI: test job, py3.11 + py3.13)
 # batch with injected latent defects, and writes calibration-report.md,
 # estimates.jsonl, and config.json (CI: evaluation-report job, artifact).
 python -m rechip01.engine --out=calibration-report
+
+# Baseline comparison (H1 scaffold) — the engine vs a DCGM-threshold-style
+# grading rule and an error-count heuristic on the identical held-out batch;
+# writes baseline-comparison.md and baseline-metrics.json (CI:
+# evaluation-report job, artifact). All output is a simulation-based pipeline
+# check, not an H1/H2/H3 outcome.
+python -m rechip01.evaluation --out=baseline-comparison
 ```
 
 ## H1/H2/H3 comparison plan
