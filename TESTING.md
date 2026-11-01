@@ -17,7 +17,7 @@ reliability results and not H1/H2/H3 outcomes.
 | `rechip01.scanner` | `tests/test_scanner/` | `pytest` + `hypothesis`: valid/invalid/partial fixtures; header normalization and string coercion; provenance stamping and conflict quarantine; machine-readable rejection reasons; feed-vs-export parity; repository round-trips; CLI end-to-end |
 | `rechip01.engine` | `tests/test_engine/` | `pytest` + `hypothesis`: MLE risk ordering vs generator truth; interval bracketing/ordering/widening; OOD flag never scores silently (valid intervals, widening supersets); missing-input flagging; provenance propagation; seed determinism; harness rails — AUROC CI excludes 0.5 with a wide-margin point floor, ECE, coverage, in-distribution OOD rate (see `tests/test_engine/test_evaluation.py`) |
 | `rechip01.evaluation` | `tests/test_baseline_comparison.py`, `tests/test_baseline_properties.py` | `pytest` + `hypothesis`: end-to-end engine vs DCGM-threshold-grading vs error-count heuristic on the identical held-out batch; metric invariants (AUROC bounds/reversal symmetry/monotone invariance, ECE bounds); holdout isolation — baseline scores depend only on held-out scans and never shift with the training fleet; CLI report + JSON generation (see below) |
-| `rechip01.disposition` | `tests/test_disposition/` (planned) | Property tests on synthetic economies; hand-computed fixtures; regret-bound sanity |
+| `rechip01.disposition` | `tests/test_disposition/` | `pytest` + `hypothesis`: price-range/economy/config contract validation; hand-computed fixture valuations on a degenerate economy; Monte Carlo argmax vs a brute-force point-probability grid (every economic path wins somewhere); review routing — OOD flag and headline CI width route to `manual_review` (risk level alone never does), review cost priced into the decision; determinism under fixed seed; MC mean convergence to the point expectation; monotonicity — reuse ENR falls as fitness degrades, value spread widens with probability spread; evidence trace cites estimate, economy, sensitivity, and regret lines on every decision; H3-shaped policy comparison — pass/fail-resale vs optimizer vs ground-truth oracle on the identical held-out fleet with paired bootstrap differences and CLI report/JSON (see below) |
 | `rechip01.passport` (+ API) | `tests/test_api/` (planned) | `httpx`/`TestClient` integration; provenance immutability; OpenAPI schema check |
 | Dashboard | UI smoke test (planned) | Batch overview + passport view render; simulated/measured badges visible |
 
@@ -40,6 +40,13 @@ python -m rechip01.engine --out=calibration-report
 # evaluation-report job, artifact). All output is a simulation-based pipeline
 # check, not an H1/H2/H3 outcome.
 python -m rechip01.evaluation --out=baseline-comparison
+
+# Disposition comparison (H3-shaped) — the risk-adjusted optimizer vs a
+# simple pass/fail resale policy and a ground-truth oracle on the identical
+# held-out fleet under a pre-registered synthetic economy; writes
+# disposition-comparison.md and disposition-metrics.json. Simulation-based
+# pipeline check only — never an H3 outcome.
+python -m rechip01.disposition --out=disposition-comparison
 ```
 
 ## H1/H2/H3 comparison plan
@@ -50,6 +57,10 @@ simulator data:
 
 - **H1 scaffold** — engine output vs a DCGM-threshold-style baseline and a
   simple error-count heuristic, run as one command, emitting a report.
+- **H3-shaped disposition comparison** — the risk-adjusted optimizer vs a
+  simple pass/fail resale policy (gate on modeled risk, recycle below it)
+  and a ground-truth oracle, on identical held-out data under one
+  pre-registered synthetic economy, with paired bootstrap differences.
 - **H2 / H3** — thresholds and comparison definitions follow the proposal
   (§3); all numeric thresholds are provisional until the Phase I pilot-dataset
   power analysis.
