@@ -59,9 +59,17 @@ jobs:
         run: python -m pip install -e ".[dev]"
       - name: Run evaluation harness (simulation-based pipeline check)
         run: python -m rechip01.engine --out calibration-report
+      - name: Run baseline comparison (H1 scaffold, simulation-based pipeline check)
+        run: python -m rechip01.evaluation --out baseline-comparison
       - name: Upload calibration report artifact
         uses: actions/upload-artifact@v4
         with:
           name: calibration-report
           path: calibration-report/
+          if-no-files-found: error
+      - name: Upload baseline comparison artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: baseline-comparison
+          path: baseline-comparison/
           if-no-files-found: error

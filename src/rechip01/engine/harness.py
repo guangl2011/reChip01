@@ -86,7 +86,7 @@ def run_harness(config: EngineConfig | None = None) -> HarnessResult:
     engine.fit(train_fleet)
 
     _LOGGER.info("harness: scoring %d held-out units", eval_fleet.n_units)
-    estimates = _assess_by_assigned_workload(engine, eval_fleet)
+    estimates = assess_by_assigned_workload(engine, eval_fleet)
 
     evaluation = evaluate(
         estimates,
@@ -103,7 +103,7 @@ def run_harness(config: EngineConfig | None = None) -> HarnessResult:
     )
 
 
-def _assess_by_assigned_workload(
+def assess_by_assigned_workload(
     engine: ReliabilityEngine, fleet: SimulatedFleet
 ) -> list[ReliabilityEstimate]:
     """Assess each unit under its assigned workload as the primary target.
@@ -141,6 +141,7 @@ __all__ = [
     "HarnessResult",
     "TRAIN_N_UNITS",
     "TRAIN_SEED",
+    "assess_by_assigned_workload",
     "harness_eval_config",
     "harness_train_config",
     "run_harness",
