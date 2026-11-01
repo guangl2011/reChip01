@@ -11,6 +11,8 @@ reliability results and not H1/H2/H3 outcomes.
 | Module | Suite | Scope |
 |---|---|---|
 | `rechip01.health` | `tests/test_health.py` | Package imports; `/health` serves |
+| `rechip01.schemas` | `tests/test_schemas.py` | `pytest` + `hypothesis`: JSON round-trips; provenance required and frozen on every contract; range/invariant rejections (ci brackets p_fail, unit-interval bounds, regret bounds) |
+| `rechip01.repository` | `tests/test_repository.py` | Passport save/load parity; duplicate issuance rejected; latest-run lookup; path-safe record keys |
 | `rechip01.simulator` | `tests/test_simulator/` (planned) | Schema validation on sampled outputs; seed reproducibility; ground-truth label integrity |
 | `rechip01.scanner` | `tests/test_scanner/` (planned) | `pytest` + `hypothesis` property tests: valid/invalid/partial fixtures; provenance propagation |
 | `rechip01.engine` | `tests/test_engine/` (planned) | Calibration report; AUROC vs simulator ground truth; OOD flagging |
