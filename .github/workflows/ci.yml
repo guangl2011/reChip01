@@ -61,6 +61,8 @@ jobs:
         run: python -m rechip01.engine --out calibration-report
       - name: Run baseline comparison (H1 scaffold, simulation-based pipeline check)
         run: python -m rechip01.evaluation --out baseline-comparison
+      - name: Run disposition comparison (H3-shaped, simulation-based pipeline check)
+        run: python -m rechip01.disposition --out disposition-comparison
       - name: Upload calibration report artifact
         uses: actions/upload-artifact@v4
         with:
@@ -72,4 +74,10 @@ jobs:
         with:
           name: baseline-comparison
           path: baseline-comparison/
+          if-no-files-found: error
+      - name: Upload disposition comparison artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: disposition-comparison
+          path: disposition-comparison/
           if-no-files-found: error
