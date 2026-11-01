@@ -13,7 +13,7 @@ reliability results and not H1/H2/H3 outcomes.
 | `rechip01.health` | `tests/test_health.py` | Package imports; `/health` serves |
 | `rechip01.schemas` | `tests/test_schemas.py` | `pytest` + `hypothesis`: JSON round-trips; provenance required and frozen on every contract; range/invariant rejections (ci brackets p_fail, unit-interval bounds, regret bounds) |
 | `rechip01.repository` | `tests/test_repository.py` | Passport and scan-record save/load parity; duplicate issuance rejected; latest-run lookup; path-safe record keys |
-| `rechip01.simulator` | `tests/test_simulator/` (planned) | Schema validation on sampled outputs; seed reproducibility; ground-truth label integrity |
+| `rechip01.simulator` | `tests/test_simulator/` | Schema validation on sampled outputs; seed reproducibility; ground-truth label integrity; knob monotonicity (see `tests/test_simulator/README.md` for the go/no-go commands) |
 | `rechip01.scanner` | `tests/test_scanner/` | `pytest` + `hypothesis`: valid/invalid/partial fixtures; header normalization and string coercion; provenance stamping and conflict quarantine; machine-readable rejection reasons; feed-vs-export parity; repository round-trips; CLI end-to-end |
 | `rechip01.engine` | `tests/test_engine/` (planned) | Calibration report; AUROC vs simulator ground truth; OOD flagging |
 | `rechip01.disposition` | `tests/test_disposition/` (planned) | Property tests on synthetic economies; hand-computed fixtures; regret-bound sanity |
