@@ -1,12 +1,19 @@
-"""Tests for the file-backed passport repository."""
+"""Tests for the file-backed passport and scan-result repositories."""
 
 from datetime import UTC, datetime
 from typing import Any
 
 import pytest
 
-from rechip01.repository import DuplicatePassportError, JsonPassportRepository
-from rechip01.schemas import AssetPassport, Provenance
+from rechip01.repository import (
+    DuplicatePassportError,
+    DuplicateScanError,
+    JsonPassportRepository,
+    JsonScanResultRepository,
+)
+from rechip01.scanner import scan_batch
+from rechip01.schemas import AssetPassport, Provenance, ScanResult
+from tests.test_scanner.fixtures import valid_row
 from tests.test_schemas import passport_kwargs
 
 
@@ -18,7 +25,53 @@ def make_passport(asset_id: str = "GPU-0001", run_id: str = "run-1") -> AssetPas
     return AssetPassport(**kwargs)
 
 
-def test_save_and_get_round_trip(tmp_path: Any) -> None:
+def make_scan_result(asset_id: str = "GPU-0001") -> ScanResult:
+    """Return a valid scan record with the given asset ID."""
+    report = scan_batch([valid_row(asset_id=asset_id)], Provenance.SIMULATED)
+    assert report.accepted_count == 1
+    return report.accepted[0].result
+
+
+def test_scan_save_and_get_round_trip(tmp_path: Any) -> None:
+    """A saved scan record reads back identical."""
+    repo = JsonScanResultRepository(tmp_path)
+    record = make_scan_result("GPU-SCAN-1")
+    repo.save(record)
+    assert repo.get("GPU-SCAN-1") == record
+
+
+def test_scan_get_missing_asset_returns_none(tmp_path: Any) -> None:
+    repo = JsonScanResultRepository(tmp_path)
+    assert repo.get("GPU-DOES-NOT-EXIST") is None
+
+
+def test_scan_list_all_returns_every_record(tmp_path: Any) -> None:
+    repo = JsonScanResultRepository(tmp_path)
+    first = make_scan_result("GPU-A")
+    second = make_scan_result("GPU-B")
+    repo.save(first)
+    repo.save(second)
+    assert sorted(result.asset_id for result in repo.list_all()) == ["GPU-A", "GPU-B"]
+
+
+def test_scan_save_rejects_duplicate_asset(tmp_path: Any) -> None:
+    """Storing a second scan record for the same asset is an error, not an overwrite."""
+    repo = JsonScanResultRepository(tmp_path)
+    repo.save(make_scan_result("GPU-A"))
+    with pytest.raises(DuplicateScanError):
+        repo.save(make_scan_result("GPU-A"))
+
+
+def test_scan_store_is_path_safe_for_odd_asset_ids(tmp_path: Any) -> None:
+    """Arbitrary asset IDs stay inside the store directory (hashed slugs)."""
+    repo = JsonScanResultRepository(tmp_path)
+    record = make_scan_result("../../etc/passwd")
+    repo.save(record)
+    assert repo.get("../../etc/passwd") == record
+    assert list(tmp_path.glob("scan-*.json"))
+
+
+def test_passport_save_and_get_round_trip(tmp_path: Any) -> None:
     """A saved passport reads back identical."""
     repo = JsonPassportRepository(tmp_path)
     passport = make_passport()
