@@ -395,7 +395,9 @@ class TestDeterminismAndMonotonicity:
             test_cost=50.0,
             downtime_liability=800.0,
         )
-        assert wide.max() - wide.min() > tight.max() - tight.min()
+        assert float(np.max(wide)) - float(np.min(wide)) > float(np.max(tight)) - float(
+            np.min(tight)
+        )
 
 
 def test_grid_cells_cover_all_path_winners() -> None:

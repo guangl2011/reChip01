@@ -41,11 +41,19 @@ ruff check .        # lint
 ruff format --check .
 mypy                # strict typecheck
 pytest              # unit + property tests
+
+# Go/no-go evaluation commands (simulation-based pipeline checks, not
+# real-world reliability results or H1/H2/H3 outcomes):
+python -m rechip01.engine --out=calibration-report
+python -m rechip01.evaluation --out=baseline-comparison
+python -m rechip01.disposition --out=disposition-comparison
 ```
 
 CI runs ruff, mypy (strict), and pytest on Python 3.11 and 3.13 for every
-push and pull request targeting `main`. See [TESTING.md](TESTING.md) for the
-module-to-suite map and the evaluation-harness plan.
+push and pull request targeting `main`, plus the three evaluation commands
+above as an artifact-producing job. [TESTING.md](TESTING.md) maps every
+module to its test suite, every spec acceptance criterion to a named test or
+command, and states the H1/H2/H3 comparison plan.
 
 ## License
 
