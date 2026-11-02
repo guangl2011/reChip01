@@ -11,6 +11,8 @@ Endpoints over the file-backed repositories:
   disposition optimizes, passports issue. Retrying the same ``run_id`` is a
   409 — passports are immutable and issued exactly once per (asset, run).
 - ``GET /passport/{asset_id}`` — the latest-issued passport for one asset.
+- ``GET /dashboard`` — server-rendered batch overview page.
+- ``GET /dashboard/passport/{asset_id}`` — server-rendered passport page.
 - ``GET /health`` — liveness.
 
 Honesty invariants (spec §5 flow states): invalid rows never proceed
@@ -34,6 +36,7 @@ from typing import Final
 
 from fastapi import FastAPI, HTTPException, Response
 
+from rechip01.dashboard.routes import build_dashboard_router
 from rechip01.disposition.optimizer import optimize_disposition
 from rechip01.engine.engine import ReliabilityEngine
 from rechip01.health import APP_NAME, HealthStatus, get_health
@@ -105,6 +108,7 @@ def create_app(deps: ServiceDeps, *, title: str = APP_NAME) -> FastAPI:
     """Build the FastAPI application over injected dependencies."""
     app = FastAPI(title=title)
     app.state.deps = deps
+    app.include_router(build_dashboard_router(deps))
 
     # ------------------------------------------------------------------ scan
     @app.post("/scan", response_model=ScanBatchReport)

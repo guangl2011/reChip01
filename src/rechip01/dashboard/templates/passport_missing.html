@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Passport not found — reChip01{% endblock %}
+{% block content %}
+<h1>No passport for <code>{{ asset_id }}</code></h1>
+<div class="empty">
+  <p>
+    Either this asset ID is not stored, or it is stored but has not been
+    assessed yet — passports are issued only by an assessment run
+    (<code>POST /assess</code>).
+  </p>
+  <p><a href="/dashboard">Back to the batch overview</a></p>
+</div>
+{% endblock %}

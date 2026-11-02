@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}Batch overview — reChip01{% endblock %}
+{% block content %}
+<h1>Batch overview</h1>
+
+<section class="summary">
+  <div class="card"><span class="num">{{ view.total_units }}</span> units stored</div>
+  <div class="card"><span class="num">{{ view.simulated_count }}</span> simulated</div>
+  <div class="card"><span class="num">{{ view.measured_count }}</span> measured</div>
+  <div class="card"><span class="num">{{ view.review_count }}</span> routed to manual review</div>
+</section>
+
+{% if view.units %}
+<table>
+  <thead>
+    <tr>
+      <th>Asset</th>
+      <th>Model</th>
+      <th>Provenance</th>
+      <th>State</th>
+      <th>P(fail within horizon)</th>
+      <th>Calibrated interval</th>
+      <th>OOD</th>
+      <th>Recommendation</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for unit in view.units %}
+    <tr>
+      <td><a href="{{ unit.href }}">{{ unit.asset_id }}</a></td>
+      <td>{{ unit.model }}</td>
+      <td><span class="badge prov-{{ unit.provenance }}">{{ unit.provenance }}</span></td>
+      <td>
+        <span class="badge state-{{ unit.state.value }}">{{ unit.state.value }}</span>
+        {% if unit.missing_fields %}
+        <div class="missing">missing: {{ unit.missing_fields | join(", ") }}</div>
+        {% endif %}
+      </td>
+      <td>{% if unit.p_fail %}{{ unit.p_fail }}{% else %}<span class="none">—</span>{% endif %}</td>
+      <td>{% if unit.ci %}{{ unit.ci }}{% else %}<span class="none">—</span>{% endif %}</td>
+      <td>{% if unit.ood_flag %}{{ unit.ood_flag }}{% else %}<span class="none">—</span>{% endif %}</td>
+      <td>{% if unit.recommendation %}{{ unit.recommendation }}{% else %}<span class="none">—</span>{% endif %}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<div class="empty">
+  <p><strong>No units stored yet.</strong></p>
+  <p>
+    Ingest a batch with <code>POST /scan</code> — a simulated fleet feed or a
+    real inventory export (CSV/JSONL). Every accepted unit appears here with
+    its provenance label; rejected rows are quarantined in the batch report
+    with machine-readable reasons.
+  </p>
+</div>
+{% endif %}
+{% endblock %}

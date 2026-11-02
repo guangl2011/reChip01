@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block title %}Passport {{ view.asset_id }} — reChip01{% endblock %}
+{% block content %}
+<h1>
+  Passport <code>{{ view.asset_id }}</code>
+  <span class="badge prov-{{ view.provenance }}">{{ view.provenance }}</span>
+  <span class="badge state-{{ view.state.value }}">{{ view.state.value }}</span>
+</h1>
+
+<section class="panel">
+  <h2>Reliability estimate — {{ view.horizon_days }}-day horizon</h2>
+  <dl class="kv">
+    <dt>P(fail)</dt>
+    <dd><strong>{{ view.p_fail }}</strong></dd>
+    <dt>Calibrated interval</dt>
+    <dd>{{ view.ci }}</dd>
+    <dt>Out-of-distribution</dt>
+    <dd>{% if view.ood_flag == "yes" %}<span class="badge ood">OOD — routed to review, never scored silently</span>{% else %}no (within model support){% endif %}</dd>
+    {% for workload, fitness in view.workload_fitness %}
+    <dt>Fitness — {{ workload }}</dt>
+    <dd>{{ fitness }}</dd>
+    {% endfor %}
+  </dl>
+</section>
+
+<section class="panel">
+  <h2>Disposition decision</h2>
+  <dl class="kv">
+    <dt>Recommendation</dt>
+    <dd><strong>{{ view.recommendation }}</strong></dd>
+    <dt>Expected net recovery</dt>
+    <dd>{{ view.expected_net_recovery }}</dd>
+    <dt>Regret bound</dt>
+    <dd>{{ view.regret_bound }} — how wrong the model can be before the pick flips</dd>
+  </dl>
+  <h2>Options evaluated</h2>
+  <table>
+    <thead>
+      <tr><th>Path</th><th>Expected net recovery</th><th>Regret bound</th></tr>
+    </thead>
+    <tbody>
+      {% for option in view.options %}
+      <tr>
+        <td>
+          {% if option.recommended %}<strong>{{ option.path }} (recommended)</strong>
+          {% else %}{{ option.path }}{% endif %}
+        </td>
+        <td>{{ option.expected_net_recovery }}</td>
+        <td>{{ option.regret_bound }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+
+<section class="panel">
+  <h2>Assumption trace</h2>
+  <ul class="trace">
+    {% for line in view.assumption_trace %}
+    <li>{{ line }}</li>
+    {% endfor %}
+  </ul>
+</section>
+
+<section class="panel">
+  <h2>Evidence trace</h2>
+  <ul class="trace">
+    {% for line in view.evidence_trace %}
+    <li>{{ line }}</li>
+    {% endfor %}
+  </ul>
+</section>
+
+<section class="panel">
+  <h2>Record</h2>
+  <dl class="kv">
+    <dt>Run</dt>
+    <dd>{{ view.run_id }}</dd>
+    <dt>Issued at</dt>
+    <dd>{{ view.issued_at }}</dd>
+    <dt>Model version</dt>
+    <dd>{{ view.model_version }}</dd>
+  </dl>
+</section>
+{% endblock %}
