@@ -37,6 +37,9 @@ dev = [
     "ruff==0.17.3",
     "mypy==2.4.1",
 ]
+server = [
+    "uvicorn>=0.30",
+]
 
 [project.urls]
 Repository = "https://github.com/guangl2011/reChip01"
@@ -63,5 +66,5 @@ strict = true
 files = ["src", "tests"]
 
 [[tool.mypy.overrides]]
-module = ["numpy.*", "scipy.*", "sklearn.*"]
+module = ["numpy.*", "scipy.*", "sklearn.*", "uvicorn.*"]
 ignore_missing_imports = true
