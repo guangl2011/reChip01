@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}reChip01{% endblock %}</title>
+  <style>
+    :root {
+      --ink: #1c2333; --muted: #5b6472; --line: #dde1e8; --bg: #f6f7f9;
+      --card: #ffffff; --accent: #1d4ed8;
+      --simulated-bg: #efe9fb; --simulated-ink: #5b2ea6;
+      --measured-bg: #e0f4ec; --measured-ink: #116a4a;
+      --ready-bg: #e0f4ec; --ready-ink: #116a4a;
+      --pending-bg: #eceef1; --pending-ink: #4b5563;
+      --partial-bg: #fdf0dd; --partial-ink: #8a5306;
+      --review-bg: #fde5e5; --review-ink: #a12222;
+      --ood-bg: #fde5e5; --ood-ink: #a12222;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; font-family: -apple-system, "Segoe UI", Roboto, sans-serif;
+      color: var(--ink); background: var(--bg); line-height: 1.45;
+    }
+    header {
+      background: var(--card); border-bottom: 1px solid var(--line);
+      padding: 0.8rem 1.5rem; display: flex; align-items: baseline; gap: 1rem;
+      flex-wrap: wrap;
+    }
+    header .brand { font-weight: 700; font-size: 1.1rem; color: var(--ink); text-decoration: none; }
+    header .disclaimer { color: var(--muted); font-size: 0.85rem; }
+    main { max-width: 72rem; margin: 1.5rem auto; padding: 0 1.5rem; }
+    footer {
+      max-width: 72rem; margin: 2rem auto; padding: 0 1.5rem;
+      color: var(--muted); font-size: 0.8rem;
+    }
+    h1 { font-size: 1.4rem; margin: 0 0 1rem; }
+    .summary { display: flex; gap: 1rem; margin-bottom: 1.2rem; flex-wrap: wrap; }
+    .card {
+      background: var(--card); border: 1px solid var(--line); border-radius: 8px;
+      padding: 0.7rem 1.1rem; font-size: 0.9rem; color: var(--muted);
+    }
+    .card .num { display: block; font-size: 1.5rem; font-weight: 700; color: var(--ink); }
+    table {
+      width: 100%; border-collapse: collapse; background: var(--card);
+      border: 1px solid var(--line); border-radius: 8px; overflow: hidden;
+      font-size: 0.9rem;
+    }
+    th, td { padding: 0.55rem 0.8rem; text-align: left; border-bottom: 1px solid var(--line); }
+    thead th { background: #eef0f4; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.03em; color: var(--muted); }
+    tbody tr:last-child td { border-bottom: none; }
+    a { color: var(--accent); }
+    .badge {
+      display: inline-block; padding: 0.12rem 0.55rem; border-radius: 999px;
+      font-size: 0.75rem; font-weight: 600; white-space: nowrap;
+    }
+    .prov-simulated { background: var(--simulated-bg); color: var(--simulated-ink); }
+    .prov-measured { background: var(--measured-bg); color: var(--measured-ink); }
+    .state-ready { background: var(--ready-bg); color: var(--ready-ink); }
+    .state-pending { background: var(--pending-bg); color: var(--pending-ink); }
+    .state-partial { background: var(--partial-bg); color: var(--partial-ink); }
+    .state-review { background: var(--review-bg); color: var(--review-ink); }
+    .badge.ood { background: var(--ood-bg); color: var(--ood-ink); }
+    .missing { color: var(--partial-ink); font-size: 0.78rem; margin-top: 0.15rem; }
+    .empty {
+      background: var(--card); border: 1px dashed var(--line); border-radius: 8px;
+      padding: 2rem; text-align: center; color: var(--muted);
+    }
+    .none { color: var(--muted); }
+    section.panel {
+      background: var(--card); border: 1px solid var(--line); border-radius: 8px;
+      padding: 1rem 1.2rem; margin-bottom: 1.2rem;
+    }
+    section.panel h2 { font-size: 1rem; margin: 0 0 0.7rem; }
+    dl.kv { display: grid; grid-template-columns: max-content 1fr; gap: 0.3rem 1.2rem; margin: 0; }
+    dl.kv dt { color: var(--muted); font-size: 0.85rem; }
+    dl.kv dd { margin: 0; font-size: 0.9rem; font-variant-numeric: tabular-nums; }
+    ul.trace { margin: 0; padding-left: 1.2rem; font-family: ui-monospace, monospace; font-size: 0.8rem; }
+    ul.trace li { margin-bottom: 0.3rem; word-break: break-all; }
+  </style>
+</head>
+<body>
+  <header>
+    <a class="brand" href="/dashboard">reChip01</a>
+    <span class="disclaimer">Asset reliability dashboard — decision support, not accredited certification</span>
+  </header>
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+  <footer>
+    Provenance is structural: simulated and measured data are labeled on every
+    screen and never pooled. Uncertainty rides on every estimate.
+  </footer>
+</body>
+</html>
